@@ -18,14 +18,14 @@ exports.postAddProduct = async (req, res) => {
   }
 }
 
-// exports.getProducts = async (req, res) => {
-//   const products = await Product.fetchAll()
-//   res.render('admin/products', {
-//     pageTitle: 'All admin products',
-//     products: products,
-//     path: '/admin/products'
-//   })
-// }
+exports.getProducts = async (req, res) => {
+  const products = await Product.find()
+  res.render('admin/products', {
+    pageTitle: 'All admin products',
+    products: products,
+    path: '/admin/products'
+  })
+}
 
 // exports.getEditProduct = async (req, res) => {
 //   const id = req.params.id
