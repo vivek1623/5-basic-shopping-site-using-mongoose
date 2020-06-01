@@ -8,19 +8,15 @@ exports.getAddProduct = (req, res) => {
   })
 }
 
-// exports.postAddProduct = async (req, res) => {
-//   const title = req.body.title
-//   const imageUrl = req.body.imageUrl
-//   const price = req.body.price
-//   const description = req.body.description
-//   try {
-//     const product = new Product(title, imageUrl, price, description, null, req.user._id)
-//     await product.save()
-//     res.redirect('/admin/products')
-//   } catch (e) {
-//     res.redirect('/admin/add-product')
-//   }
-// }
+exports.postAddProduct = async (req, res) => {
+  try {
+    const product = new Product(req.body)
+    await product.save()
+    res.redirect('/admin/products')
+  } catch (e) {
+    res.redirect('/admin/add-product')
+  }
+}
 
 // exports.getProducts = async (req, res) => {
 //   const products = await Product.fetchAll()
