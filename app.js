@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 
 const adminRouter = require('./routes/admin')
 const shopRouter = require('./routes/shop')
@@ -26,6 +27,14 @@ app.use((req, res, next) => {
   })
 })
 
-app.listen(process.env.PORT, () => {
-  console.log(`server is up on port ${process.env.PORT}`)
+mongoose.connect(process.env.MONGODB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => {
+  console.log('Database connected')
+  app.listen(process.env.PORT, () => {
+    console.log(`server is up on port ${process.env.PORT}`)
+  })
+}).catch(err => {
+  console.log('Database connection failed', err);
 })
