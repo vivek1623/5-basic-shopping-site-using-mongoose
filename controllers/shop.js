@@ -19,17 +19,17 @@ exports.getProducts = async (req, res) => {
   })
 }
 
-// exports.getProduct = async (req, res) => {
-//   if (req.params.id) {
-//     const product = await Product.findById(req.params.id)
-//     res.render('shop/product-details', {
-//       pageTitle: 'Product Details',
-//       product: product,
-//       path: '/product-details'
-//     })
-//   } else
-//     res.redirect('/products')
-// }
+exports.getProduct = async (req, res) => {
+  if (req.params.id) {
+    const product = await Product.findById(req.params.id)
+    res.render('shop/product-details', {
+      pageTitle: 'Product Details',
+      product: product,
+      path: '/product-details'
+    })
+  } else
+    res.redirect('/products')
+}
 
 // exports.postCart = async (req, res) => {
 //   if (!req.body.productId)
