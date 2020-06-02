@@ -1,5 +1,5 @@
 const Product = require('../models/products')
-// const Order = require('../models/order')
+const Order = require('../models/order')
 
 exports.getIndex = async (req, res) => {
   const products = await Product.find()
@@ -63,20 +63,21 @@ exports.postCartProductDelete = async (req, res) => {
   res.redirect('/cart')
 }
 
-// exports.postOrder = async (req, res) => {
-//   try {
-//     const products = await req.user.getCart()
-//     if (!products)
-//       return res.redirect('/products')
-//     const order = new Order(products, req.user._id)
-//     await order.save()
-//     await req.user.clearCart()
-//     res.redirect('/orders')
-//   } catch (e) {
-//     console.log('error', e)
-//     res.redirect('/products')
-//   }
-// }
+exports.postOrder = async (req, res) => {
+  try {
+    const user = await req.user.populate('cart.products.productId').execPopulate()
+    const products = user.cart.products.map(p => {
+      return { quantity: p.quantity, product: { ...p.productId._doc } }
+    })
+    const order = new Order({ products, userId: req.user._id })
+    await order.save()
+    await req.user.clearCart()
+    res.redirect('/orders')
+  } catch (e) {
+    console.log('error', e)
+    res.redirect('/products')
+  }
+}
 
 // exports.getOrders = async (req, res) => {
 //   try {
