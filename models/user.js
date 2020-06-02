@@ -6,7 +6,7 @@ const schema = new Schema({
     required: true
   },
   email: {
-    name: String,
+    type: String,
     required: true
   },
   cart: {
