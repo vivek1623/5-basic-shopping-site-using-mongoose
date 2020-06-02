@@ -19,6 +19,17 @@ app.use(express.static(publicDirPath))
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
+app.use(async (req, res, next) => {
+  const user = await User.findOne()
+  if (user) {
+    req.user = user
+    next()
+  } else {
+    res.send('User not found')
+    console.log('User not found')
+  }
+})
+
 app.use('/admin', adminRouter)
 app.use(shopRouter)
 

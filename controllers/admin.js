@@ -10,7 +10,7 @@ exports.getAddProduct = (req, res) => {
 
 exports.postAddProduct = async (req, res) => {
   try {
-    const product = new Product(req.body)
+    const product = new Product({ ...req.body, userId: req.user._id })
     await product.save()
     res.redirect('/admin/products')
   } catch (e) {
