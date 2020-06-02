@@ -79,16 +79,16 @@ exports.postOrder = async (req, res) => {
   }
 }
 
-// exports.getOrders = async (req, res) => {
-//   try {
-//     const orders = await Order.findOrderByUserId(req.user._id)
-//     res.render('shop/orders', {
-//       path: '/orders',
-//       pageTitle: 'Your Orders',
-//       orders: orders
-//     })
-//   } catch (e) {
-//     console.log('error', e)
-//     res.redirect('/products')
-//   }
-// }
+exports.getOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ userId: req.user._id })
+    res.render('shop/orders', {
+      path: '/orders',
+      pageTitle: 'Your Orders',
+      orders: orders
+    })
+  } catch (e) {
+    console.log('error', e)
+    res.redirect('/products')
+  }
+}
