@@ -58,7 +58,7 @@ exports.postEditProduct = async (req, res) => {
 exports.postDeleteProduct = async (req, res) => {
   try {
     if (req.body._id)
-      await Product.deleteById(req.body._id)
+      await Product.findByIdAndRemove(req.body._id)
     res.redirect('/admin/products')
   } catch (e) {
     console.log('error', e)
