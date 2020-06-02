@@ -27,18 +27,18 @@ exports.getProducts = async (req, res) => {
   })
 }
 
-// exports.getEditProduct = async (req, res) => {
-//   const id = req.params.id
-//   const product = await Product.findById(id)
-//   if (!product)
-//     return res.redirect('/')
-//   res.render('admin/add-product', {
-//     pageTitle: 'Edit Product',
-//     path: '/admin/edit-product',
-//     editing: true,
-//     product: product
-//   })
-// }
+exports.getEditProduct = async (req, res) => {
+  const id = req.params.id
+  const product = await Product.findById(id)
+  if (!product)
+    return res.redirect('/')
+  res.render('admin/add-product', {
+    pageTitle: 'Edit Product',
+    path: '/admin/edit-product',
+    editing: true,
+    product: product
+  })
+}
 
 // exports.postEditProduct = async (req, res) => {
 //   const title = req.body.title

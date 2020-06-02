@@ -13,8 +13,8 @@ router.get('/add-product', adminControllers.getAddProduct)
 // /admin/add-product => POST
 router.post('/add-product', adminControllers.postAddProduct)
 
-// // /admin/edit-product => GET
-// router.get('/edit-product/:id', adminControllers.getEditProduct)
+// /admin/edit-product => GET
+router.get('/edit-product/:id', adminControllers.getEditProduct)
 
 // // /admin/edit-product => POST
 // router.post('/edit-product', adminControllers.postEditProduct)
