@@ -33,7 +33,13 @@ userSchema.methods.addToCart = function (productId) {
     user.cart.products[index].quantity = user.cart.products[index].quantity + 1
   else
     user.cart.products.push({ productId, quantity: 1 })
-  user.save()
+  return user.save()
+}
+
+userSchema.methods.removeFromCart = function (productId) {
+  const user = this
+  user.cart.products = user.cart.products.filter(product => product.productId.toString() !== productId.toString())
+  return user.save()
 }
 
 const User = model('User', userSchema)

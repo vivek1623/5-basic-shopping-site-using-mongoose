@@ -44,6 +44,7 @@ exports.postCart = async (req, res) => {
 exports.getCart = async (req, res) => {
   try {
     const user = await req.user.populate('cart.products.productId').execPopulate()
+    // console.log('products', user.cart.products)
     res.render('shop/cart', {
       pageTitle: 'Cart',
       products: user.cart.products,
@@ -54,13 +55,13 @@ exports.getCart = async (req, res) => {
   }
 }
 
-// exports.postCartProductDelete = async (req, res) => {
-//   const productId = req.body.productId
-//   if (!productId)
-//     return res.redirect('/products')
-//   await req.user.deleteItemFromCart(productId)
-//   res.redirect('/cart')
-// }
+exports.postCartProductDelete = async (req, res) => {
+  const productId = req.body.productId
+  if (!productId)
+    return res.redirect('/products')
+  await req.user.removeFromCart(productId)
+  res.redirect('/cart')
+}
 
 // exports.postOrder = async (req, res) => {
 //   try {
