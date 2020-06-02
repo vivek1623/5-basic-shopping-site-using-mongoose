@@ -40,29 +40,28 @@ exports.getEditProduct = async (req, res) => {
   })
 }
 
-// exports.postEditProduct = async (req, res) => {
-//   const title = req.body.title
-//   const imageUrl = req.body.imageUrl
-//   const price = req.body.price
-//   const description = req.body.description
-//   const id = req.body._id
-//   try {
-//     const product = new Product(title, imageUrl, price, description, id)
-//     await product.save()
-//     res.redirect('/admin/products')
-//   } catch (e) {
-//     res.redirect('/admin/add-product')
-//   }
-// }
+exports.postEditProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.body._id)
+    product.title = req.body.title
+    product.imageUrl = req.body.imageUrl
+    product.price = req.body.price
+    product.description = req.body.description
+    await product.save()
+    res.redirect('/admin/products')
+  } catch (e) {
+    res.redirect('/admin/add-product')
+  }
+}
 
 
-// exports.postDeleteProduct = async (req, res) => {
-//   try {
-//     if (req.body._id)
-//       await Product.deleteById(req.body._id)
-//     res.redirect('/admin/products')
-//   } catch (e) {
-//     console.log('error', e)
-//     res.redirect('/admin/products')
-//   }
-// }
+exports.postDeleteProduct = async (req, res) => {
+  try {
+    if (req.body._id)
+      await Product.deleteById(req.body._id)
+    res.redirect('/admin/products')
+  } catch (e) {
+    console.log('error', e)
+    res.redirect('/admin/products')
+  }
+}
