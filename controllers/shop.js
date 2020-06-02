@@ -41,18 +41,18 @@ exports.postCart = async (req, res) => {
   res.redirect('/cart')
 }
 
-// exports.getCart = async (req, res) => {
-//   try {
-//     const products = await req.user.getCart()
-//     res.render('shop/cart', {
-//       pageTitle: 'Cart',
-//       products: products,
-//       path: '/cart'
-//     })
-//   } catch (e) {
-//     res.redirect('/')
-//   }
-// }
+exports.getCart = async (req, res) => {
+  try {
+    const user = await req.user.populate('cart.products.productId').execPopulate()
+    res.render('shop/cart', {
+      pageTitle: 'Cart',
+      products: user.cart.products,
+      path: '/cart'
+    })
+  } catch (e) {
+    res.redirect('/')
+  }
+}
 
 // exports.postCartProductDelete = async (req, res) => {
 //   const productId = req.body.productId
