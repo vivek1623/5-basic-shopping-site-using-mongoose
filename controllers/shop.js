@@ -31,15 +31,15 @@ exports.getProduct = async (req, res) => {
     res.redirect('/products')
 }
 
-// exports.postCart = async (req, res) => {
-//   if (!req.body.productId)
-//     return res.redirect('/products')
-//   const product = await Product.findById(req.body.productId)
-//   if (!product)
-//     return res.redirect('/products')
-//   await req.user.addToCart(product._id)
-//   res.redirect('/cart')
-// }
+exports.postCart = async (req, res) => {
+  if (!req.body.productId)
+    return res.redirect('/products')
+  const product = await Product.findById(req.body.productId)
+  if (!product)
+    return res.redirect('/products')
+  await req.user.addToCart(product._id)
+  res.redirect('/cart')
+}
 
 // exports.getCart = async (req, res) => {
 //   try {

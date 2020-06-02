@@ -10,7 +10,7 @@ router.get('/products', shopControllers.getProducts)
 
 router.get('/products/:id', shopControllers.getProduct)
 
-// router.post('/cart', shopControllers.postCart)
+router.post('/cart', shopControllers.postCart)
 
 // router.get('/cart', shopControllers.getCart)
 
