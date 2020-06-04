@@ -35,7 +35,9 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(async (req, res, next) => {
-  const user = await User.findOne()
+  if (!(req.session.user && req.session.user._id))
+    return next()
+  const user = await User.findById(req.session.user._id)
   if (user) {
     req.user = user
     next()
