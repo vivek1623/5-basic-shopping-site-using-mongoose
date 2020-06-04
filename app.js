@@ -2,6 +2,8 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const session = require('express-session')
+const MongoDBStore = require('connect-mongodb-session')(session)
 
 const User = require('./models/user')
 
@@ -17,6 +19,18 @@ app.set('view engine', 'ejs')
 app.set('views', 'views')
 
 app.use(express.static(publicDirPath))
+
+const store = new MongoDBStore({
+  uri: process.env.MONGODB_URL,
+  collection: "sessions"
+})
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: store
+}))
 
 app.use(bodyParser.urlencoded({ extended: false }))
 

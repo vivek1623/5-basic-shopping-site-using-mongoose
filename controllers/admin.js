@@ -4,7 +4,8 @@ exports.getAddProduct = (req, res) => {
   res.render('admin/add-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
-    editing: false
+    editing: false,
+    isAuthenticated: req.session.isLoggedIn
   })
 }
 
@@ -23,7 +24,8 @@ exports.getProducts = async (req, res) => {
   res.render('admin/products', {
     pageTitle: 'All admin products',
     products: products,
-    path: '/admin/products'
+    path: '/admin/products',
+    isAuthenticated: req.session.isLoggedIn
   })
 }
 
@@ -36,7 +38,8 @@ exports.getEditProduct = async (req, res) => {
     pageTitle: 'Edit Product',
     path: '/admin/edit-product',
     editing: true,
-    product: product
+    product: product,
+    isAuthenticated: req.session.isLoggedIn
   })
 }
 
