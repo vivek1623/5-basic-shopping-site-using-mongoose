@@ -1,4 +1,36 @@
+const bcrypt = require('bcrypt')
 const User = require('../models/user')
+
+exports.getSignup = (req, res, next) => {
+  res.render('auth/signup', {
+    path: '/signup',
+    pageTitle: 'Signup',
+    isAuthenticated: false
+  });
+};
+
+exports.postSignup = async (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const confirmPassword = req.body.confirmPassword
+  const cart = { products: [] }
+  try {
+    const user = await User.findOne({ email })
+    if (user) {
+      return res.redirect('/signup')
+    }
+    if (!password || password !== confirmPassword) {
+      return res.redirect('/signup')
+    }
+    const hashPassword = await bcrypt.hash(password, 8)
+    const newUser = new User({ email, password: hashPassword, cart })
+    await newUser.save()
+    res.redirect('/login')
+  } catch (err) {
+    console.log('Error', err)
+    res.redirect('/signup')
+  }
+}
 
 exports.getLogin = (req, res, next) => {
   res.render('auth/login', {
@@ -9,8 +41,17 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = async (req, res) => {
-  const user = await User.findById("5ed69a0656a71432609031f6")
+  const email = req.body.email
+  const password = req.body.password
+  if (!email || !password) {
+    return res.redirect('/login')
+  }
+  const user = await User.findOne({ email })
   if (user) {
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) {
+      return res.redirect('/login')
+    }
     req.session.user = user
     req.session.isLoggedIn = true
     await req.session.save()

@@ -54,7 +54,8 @@ app.use(authRouter)
 app.use((req, res, next) => {
   res.render('404', {
     pageTitle: '404',
-    path: '/404'
+    path: '/404',
+    isAuthenticated: req.session.isLoggedIn
   })
 })
 
@@ -63,15 +64,6 @@ mongoose.connect(process.env.MONGODB_URL, {
   useUnifiedTopology: true
 }).then(async () => {
   console.log('Database connected')
-  const user = await User.findOne()
-  if (!user) {
-    const newUser = new User({
-      name: 'vivasi',
-      email: 'vivasi1623@gmail.com',
-      cart: { products: [] }
-    })
-    await newUser.save()
-  }
   app.listen(process.env.PORT, () => {
     console.log(`server is up on port ${process.env.PORT}`)
   })
