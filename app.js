@@ -5,12 +5,15 @@ const mongoose = require('mongoose')
 const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
 const flash = require('connect-flash')
+const csrf = require('csurf')
 
 const User = require('./models/user')
 
 const adminRouter = require('./routes/admin')
 const shopRouter = require('./routes/shop')
 const authRouter = require('./routes/auth')
+
+const errorControllers = require('./controllers/error')
 
 const publicDirPath = path.join(__dirname, 'public')
 
@@ -26,6 +29,10 @@ const store = new MongoDBStore({
   collection: "sessions"
 })
 
+const csrfProtection = csrf()
+
+app.use(bodyParser.urlencoded({ extended: false }))
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -33,9 +40,9 @@ app.use(session({
   store: store
 }))
 
-app.use(flash())
+app.use(csrfProtection)
 
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(flash())
 
 app.use(async (req, res, next) => {
   if (!(req.session.user && req.session.user._id))
@@ -50,17 +57,17 @@ app.use(async (req, res, next) => {
   }
 })
 
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn
+  res.locals.csrfToken = req.csrfToken()
+  next()
+})
+
 app.use('/admin', adminRouter)
 app.use(shopRouter)
 app.use(authRouter)
 
-app.use((req, res, next) => {
-  res.render('404', {
-    pageTitle: '404',
-    path: '/404',
-    isAuthenticated: req.session.isLoggedIn
-  })
-})
+app.use(errorControllers.get404Page)
 
 mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true,
@@ -71,6 +78,6 @@ mongoose.connect(process.env.MONGODB_URL, {
     console.log(`server is up on port ${process.env.PORT}`)
   })
 }).catch(err => {
-  console.log('Database connection failed', err);
+  console.log('Database connection failed', err)
 })
 

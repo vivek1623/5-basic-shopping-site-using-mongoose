@@ -7,7 +7,6 @@ exports.getIndex = async (req, res) => {
     pageTitle: 'Shop',
     products: products,
     path: '/',
-    isAuthenticated: req.session.isLoggedIn
   })
 }
 
@@ -17,7 +16,6 @@ exports.getProducts = async (req, res) => {
     pageTitle: 'All product',
     products: products,
     path: '/products',
-    isAuthenticated: req.session.isLoggedIn
   })
 }
 
@@ -28,7 +26,6 @@ exports.getProduct = async (req, res) => {
       pageTitle: 'Product Details',
       product: product,
       path: '/product-details',
-      isAuthenticated: req.session.isLoggedIn
     })
   } else
     res.redirect('/products')
@@ -52,7 +49,6 @@ exports.getCart = async (req, res) => {
       pageTitle: 'Cart',
       products: user.cart.products,
       path: '/cart',
-      isAuthenticated: req.session.isLoggedIn
     })
   } catch (e) {
     res.redirect('/')
@@ -90,7 +86,6 @@ exports.getOrders = async (req, res) => {
       path: '/orders',
       pageTitle: 'Your Orders',
       orders: orders,
-      isAuthenticated: req.session.isLoggedIn
     })
   } catch (e) {
     console.log('error', e)
