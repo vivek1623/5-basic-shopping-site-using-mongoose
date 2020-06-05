@@ -1,25 +1,26 @@
 const express = require('express')
 
 const adminControllers = require('../controllers/admin')
+const authMiddleware = require('../middlewares/auth')
 
 const router = express.Router()
 
 // /admin/products => GET
-router.get('/products', adminControllers.getProducts)
+router.get('/products', authMiddleware, adminControllers.getProducts)
 
 // /admin/add-product => GET
-router.get('/add-product', adminControllers.getAddProduct)
+router.get('/add-product', authMiddleware, adminControllers.getAddProduct)
 
 // /admin/add-product => POST
-router.post('/add-product', adminControllers.postAddProduct)
+router.post('/add-product',authMiddleware, adminControllers.postAddProduct)
 
 // /admin/edit-product => GET
-router.get('/edit-product/:id', adminControllers.getEditProduct)
+router.get('/edit-product/:id',authMiddleware, adminControllers.getEditProduct)
 
 // /admin/edit-product => POST
-router.post('/edit-product', adminControllers.postEditProduct)
+router.post('/edit-product',authMiddleware, adminControllers.postEditProduct)
 
 // /admin/delete-product => POST
-router.post('/delete-product', adminControllers.postDeleteProduct)
+router.post('/delete-product',authMiddleware, adminControllers.postDeleteProduct)
 
 module.exports = router
