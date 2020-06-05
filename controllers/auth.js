@@ -2,10 +2,13 @@ const bcrypt = require('bcrypt')
 const User = require('../models/user')
 
 exports.getSignup = (req, res, next) => {
+  const message = req.flash('error');
+  const errorMessage = message.length > 0 ? message[0] : null
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    isAuthenticated: false
+    isAuthenticated: false,
+    errorMessage
   });
 };
 
@@ -17,9 +20,11 @@ exports.postSignup = async (req, res, next) => {
   try {
     const user = await User.findOne({ email })
     if (user) {
+      req.flash('error', 'email already occupied.');
       return res.redirect('/signup')
     }
     if (!password || password !== confirmPassword) {
+      req.flash('error', 'password and confirm password shoould be same.');
       return res.redirect('/signup')
     }
     const hashPassword = await bcrypt.hash(password, 8)
@@ -28,6 +33,7 @@ exports.postSignup = async (req, res, next) => {
     res.redirect('/login')
   } catch (err) {
     console.log('Error', err)
+    req.flash('error', 'Something went wrong.');
     res.redirect('/signup')
   }
 }
