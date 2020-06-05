@@ -1,11 +1,14 @@
 const Product = require('../models/products')
 
 exports.getAddProduct = (req, res) => {
+  const message = req.flash('error');
+  const errorMessage = message.length > 0 ? message[0] : null
   res.render('admin/add-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
-    isAuthenticated: req.session.isLoggedIn
+    isAuthenticated: req.session.isLoggedIn,
+    errorMessage
   })
 }
 
@@ -15,32 +18,45 @@ exports.postAddProduct = async (req, res) => {
     await product.save()
     res.redirect('/admin/products')
   } catch (e) {
+    req.flash('error', 'Something went wrong')
     res.redirect('/admin/add-product')
   }
 }
 
 exports.getProducts = async (req, res) => {
+  const message = req.flash('error');
+  const errorMessage = message.length > 0 ? message[0] : null
   const products = await Product.find()
   res.render('admin/products', {
     pageTitle: 'All admin products',
     products: products,
     path: '/admin/products',
-    isAuthenticated: req.session.isLoggedIn
+    isAuthenticated: req.session.isLoggedIn,
+    errorMessage
   })
 }
 
 exports.getEditProduct = async (req, res) => {
-  const id = req.params.id
-  const product = await Product.findById(id)
-  if (!product)
-    return res.redirect('/')
-  res.render('admin/add-product', {
-    pageTitle: 'Edit Product',
-    path: '/admin/edit-product',
-    editing: true,
-    product: product,
-    isAuthenticated: req.session.isLoggedIn
-  })
+  try {
+    const product = await Product.findById(req.params.id)
+    if (!product) {
+      req.flash('error', 'Product not found')
+      return res.redirect('/admin/products')
+    }
+    const message = req.flash('error');
+    const errorMessage = message.length > 0 ? message[0] : null
+    res.render('admin/add-product', {
+      pageTitle: 'Edit Product',
+      path: '/admin/edit-product',
+      editing: true,
+      product: product,
+      isAuthenticated: req.session.isLoggedIn,
+      errorMessage
+    })
+  } catch (e) {
+    req.flash('error', 'Something went wrong')
+    res.redirect('/admin/products')
+  }
 }
 
 exports.postEditProduct = async (req, res) => {
@@ -53,6 +69,7 @@ exports.postEditProduct = async (req, res) => {
     await product.save()
     res.redirect('/admin/products')
   } catch (e) {
+    req.flash('error', 'Something went wrong')
     res.redirect('/admin/add-product')
   }
 }
@@ -65,6 +82,7 @@ exports.postDeleteProduct = async (req, res) => {
     res.redirect('/admin/products')
   } catch (e) {
     console.log('error', e)
+    req.flash('error', 'Something went wrong')
     res.redirect('/admin/products')
   }
 }

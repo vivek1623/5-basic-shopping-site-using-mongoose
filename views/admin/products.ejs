@@ -5,6 +5,9 @@
 <body>
   <%- include('../includes/app-header.ejs') %>
   <main>
+    <% if (errorMessage) { %>
+    <div class="user-message user-message--error"><%= errorMessage %></div>
+    <% } %>
     <% if(products.length === 0) { %>
     <div class="not-found-wrapper">
       <img src="/img/empty.png" alt="" style="width:500px; max-width:90%;">
