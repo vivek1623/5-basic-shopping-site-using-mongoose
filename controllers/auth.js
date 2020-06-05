@@ -39,10 +39,13 @@ exports.postSignup = async (req, res, next) => {
 }
 
 exports.getLogin = (req, res, next) => {
+  const message = req.flash('error');
+  const errorMessage = message.length > 0 ? message[0] : null
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    isAuthenticated: false
+    isAuthenticated: false,
+    errorMessage
   });
 };
 
@@ -50,12 +53,14 @@ exports.postLogin = async (req, res) => {
   const email = req.body.email
   const password = req.body.password
   if (!email || !password) {
+    req.flash('error', 'Invalid email/password.')
     return res.redirect('/login')
   }
   const user = await User.findOne({ email })
   if (user) {
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) {
+      req.flash('error', 'Invalid email/password.')
       return res.redirect('/login')
     }
     req.session.user = user
@@ -63,8 +68,8 @@ exports.postLogin = async (req, res) => {
     await req.session.save()
     res.redirect('/')
   } else {
+    req.flash('error', 'Profile not found please signup first')
     res.redirect('/login');
-    console.log('User not found')
   }
 }
 
