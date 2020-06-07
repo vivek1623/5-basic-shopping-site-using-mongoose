@@ -22,14 +22,14 @@ const app = express()
 app.set('view engine', 'ejs')
 app.set('views', 'views')
 
-app.use(express.static(publicDirPath))
-
 const store = new MongoDBStore({
   uri: process.env.MONGODB_URL,
   collection: "sessions"
 })
 
 const csrfProtection = csrf()
+
+app.use(express.static(publicDirPath))
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
