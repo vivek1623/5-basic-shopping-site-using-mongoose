@@ -268,3 +268,9 @@ form {
   background: rgb(255, 176, 176);
   color: red;
 }
+
+.reset-password {
+  color: #5a2d9c;
+  text-align: center;
+  padding: 15px;
+}
