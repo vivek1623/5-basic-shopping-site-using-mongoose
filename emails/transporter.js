@@ -14,10 +14,20 @@ const sendWelcomeMail = email => {
     to: email,
     from: 'vivek@oriserve.com',
     subject: 'Signup succeeded!',
-    text: "<h2>You have successfully signed up. Enjoy !!</h2>"
+    html: "<h2>You have successfully signed up. Enjoy !!</h2>"
+  })
+}
+
+const sendUpdatePasswordEmail = (email, token) => {
+  transporter.sendMail({
+    to: email,
+    from: 'vivek@oriserve.com',
+    subject: 'Password reset',
+    html: `<p>You requested a password reset</p><p>Click this <a href="http://localhost:${process.env.PORT}/reset-password/${token}">link</a> to set a new password.</p>`
   })
 }
 
 module.exports = {
-  sendWelcomeMail
+  sendWelcomeMail,
+  sendUpdatePasswordEmail
 }

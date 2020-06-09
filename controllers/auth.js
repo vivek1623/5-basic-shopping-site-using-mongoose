@@ -2,7 +2,7 @@ const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
 
-const { sendWelcomeMail } = require('../emails/transporter')
+const { sendWelcomeMail, sendUpdatePasswordEmail } = require('../emails/transporter')
 
 exports.getSignup = (req, res, next) => {
   const message = req.flash('error');
@@ -83,7 +83,7 @@ exports.postLogout = (req, res) => {
   })
 }
 
-exports.getResetPassword = async (req, res) => {
+exports.getResetPassword = (req, res) => {
   const message = req.flash('error');
   const errorMessage = message.length > 0 ? message[0] : null
   res.render('auth/reset-password', {
@@ -94,10 +94,28 @@ exports.getResetPassword = async (req, res) => {
 }
 
 exports.postResetPassword = async (req, res) => {
-  crypto.randomBytes(32, (err, buffer) => {
-    if (err) {
+  crypto.randomBytes(32, async (err, buffer) => {
+    try {
+      if (err) {
+        console.log(err)
+        req.flash('error', 'Something went wrong')
+        return res.redirect('/reset-password')
+      }
+      const token = buffer.toString("hex")
+      const user = await User.findOne({ email: req.body.email })
+      if (!user) {
+        req.flash('error', 'No account with that email found.')
+        return res.redirect('/reset-passsword')
+      }
+      user.resetToken = token;
+      user.resetTokenExpiration = Date.now() + 3600000;
+      await user.save()
+      res.redirect('/')
+      sendUpdatePasswordEmail(user.email, token)
+    } catch (e) {
       console.log(err)
-      return res.redirect('/login')
+      req.flash('error', 'Something went wrong')
+      return res.redirect('/reset-password')
     }
   })
 }
