@@ -112,10 +112,34 @@ exports.postResetPassword = async (req, res) => {
       await user.save()
       res.redirect('/')
       sendUpdatePasswordEmail(user.email, token)
-    } catch (e) {
+    } catch (err) {
       console.log(err)
       req.flash('error', 'Something went wrong')
       return res.redirect('/reset-password')
     }
   })
+}
+
+exports.getUpdatePassword = async (req, res) => {
+  try {
+    const token = req.params.token
+    const user = await User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+    if (!user) {
+      req.flash('error', 'Token is invalid/Expired')
+      return res.redirect('/login')
+    }
+    const message = req.flash('error');
+    const errorMessage = message.length > 0 ? message[0] : null
+    res.render('auth/update-password', {
+      path: '/update-password',
+      pageTitle: 'Update Password',
+      errorMessage,
+      userId: user._id.toString(),
+      passwordToken: token
+    });
+  } catch (err) {
+    console.log(err)
+    req.flash('error', 'Something went wrong')
+    return res.redirect('/login')
+  }
 }
