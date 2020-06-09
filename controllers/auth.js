@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
 
+const { sendWelcomeMail } = require('../emails/transporter')
+
 exports.getSignup = (req, res, next) => {
   const message = req.flash('error');
   const errorMessage = message.length > 0 ? message[0] : null
@@ -30,6 +32,7 @@ exports.postSignup = async (req, res, next) => {
     const hashPassword = await bcrypt.hash(password, 8)
     const newUser = new User({ email, password: hashPassword, cart })
     await newUser.save()
+    sendWelcomeMail(newUser.email)
     res.redirect('/login')
   } catch (err) {
     console.log('Error', err)
