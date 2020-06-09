@@ -1,3 +1,4 @@
+const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
 
@@ -79,5 +80,24 @@ exports.postLogin = async (req, res) => {
 exports.postLogout = (req, res) => {
   req.session.destroy(() => {
     res.redirect('/')
+  })
+}
+
+exports.getResetPassword = async (req, res) => {
+  const message = req.flash('error');
+  const errorMessage = message.length > 0 ? message[0] : null
+  res.render('auth/reset-password', {
+    path: '/reset',
+    pageTitle: 'Reset Password',
+    errorMessage
+  });
+}
+
+exports.postResetPassword = async (req, res) => {
+  crypto.randomBytes(32, (err, buffer) => {
+    if (err) {
+      console.log(err)
+      return res.redirect('/login')
+    }
   })
 }
