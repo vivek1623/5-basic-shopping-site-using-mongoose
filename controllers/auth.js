@@ -143,3 +143,35 @@ exports.getUpdatePassword = async (req, res) => {
     return res.redirect('/login')
   }
 }
+
+exports.postUpdatePassword = async (req, res) => {
+  try {
+    const newPassword = req.body.newPassword
+    const confirmPassword = req.body.confirmPassword
+    const userId = req.body.userId
+    const passwordToken = req.body.passwordToken
+    if (newPassword !== confirmPassword) {
+      req.flash('error', 'Password and Confirm Password must be same')
+      return res.redirect('/login')
+    }
+    const user = await User.findOne({
+      _id: userId,
+      resetToken: passwordToken,
+      resetTokenExpiration: { $gt: Date.now() }
+    })
+    if (!user) {
+      req.flash('error', 'Token is invalid/Expired')
+      return res.redirect('/login')
+    }
+    const hashPassword = await bcrypt.hash(newPassword, 8)
+    user.password = hashPassword
+    user.resetToken = undefined
+    user.resetTokenExpiration = undefined
+    await user.save()
+    res.redirect('/login')
+  } catch (err) {
+    console.log(err)
+    req.flash('error', 'Something went wrong')
+    return res.redirect('/login')
+  }
+}
