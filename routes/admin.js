@@ -2,6 +2,7 @@ const express = require('express')
 
 const adminControllers = require('../controllers/admin')
 const authMiddleware = require('../middlewares/auth')
+const validatorMiddleware = require('../middlewares/validator')
 
 const router = express.Router()
 
@@ -12,15 +13,15 @@ router.get('/products', authMiddleware, adminControllers.getProducts)
 router.get('/add-product', authMiddleware, adminControllers.getAddProduct)
 
 // /admin/add-product => POST
-router.post('/add-product',authMiddleware, adminControllers.postAddProduct)
+router.post('/add-product', authMiddleware, validatorMiddleware.addProduct, adminControllers.postAddProduct)
 
 // /admin/edit-product => GET
-router.get('/edit-product/:id',authMiddleware, adminControllers.getEditProduct)
+router.get('/edit-product/:id', authMiddleware, adminControllers.getEditProduct)
 
 // /admin/edit-product => POST
-router.post('/edit-product',authMiddleware, adminControllers.postEditProduct)
+router.post('/edit-product', authMiddleware, validatorMiddleware.addProduct, adminControllers.postEditProduct)
 
 // /admin/delete-product => POST
-router.post('/delete-product',authMiddleware, adminControllers.postDeleteProduct)
+router.post('/delete-product', authMiddleware, adminControllers.postDeleteProduct)
 
 module.exports = router

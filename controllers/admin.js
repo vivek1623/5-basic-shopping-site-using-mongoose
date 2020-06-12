@@ -1,3 +1,5 @@
+const { validationResult } = require('express-validator/check')
+
 const Product = require('../models/products')
 
 exports.getAddProduct = (req, res) => {
@@ -7,13 +9,20 @@ exports.getAddProduct = (req, res) => {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
-    isAuthenticated: req.session.isLoggedIn,
     errorMessage
   })
 }
 
 exports.postAddProduct = async (req, res) => {
   try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.render('admin/add-product', {
+        pageTitle: 'Add Product',
+        path: '/admin/add-product',
+        editing: false,
+        errorMessage: errors.array()[0].msg
+      })
     const product = new Product({ ...req.body, userId: req.user._id })
     await product.save()
     res.redirect('/admin/products')
@@ -31,7 +40,6 @@ exports.getProducts = async (req, res) => {
     pageTitle: 'All admin products',
     products: products,
     path: '/admin/products',
-    isAuthenticated: req.session.isLoggedIn,
     errorMessage
   })
 }
@@ -50,7 +58,6 @@ exports.getEditProduct = async (req, res) => {
       path: '/admin/edit-product',
       editing: true,
       product: product,
-      isAuthenticated: req.session.isLoggedIn,
       errorMessage
     })
   } catch (e) {
@@ -61,6 +68,14 @@ exports.getEditProduct = async (req, res) => {
 
 exports.postEditProduct = async (req, res) => {
   try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty())
+      return res.render('admin/add-product', {
+        pageTitle: 'Edit Product',
+        path: '/admin/edit-product',
+        editing: false,
+        errorMessage: errors.array()[0].msg
+      })
     const product = await Product.findById(req.body._id)
     product.title = req.body.title
     product.imageUrl = req.body.imageUrl

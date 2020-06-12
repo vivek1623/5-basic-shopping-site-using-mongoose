@@ -36,7 +36,22 @@ const login = [
     .trim()
 ]
 
+const addProduct = [
+  body('title', 'product title is not valid')
+    .isString()
+    .isLength({ min: 3 })
+    .trim(),
+  body('imageUrl', 'product image url is not valid')
+    .isURL(),
+  body('price', 'product price is not valid')
+    .isFloat(),
+  body('description', 'description must be min 5 and max 200 character long')
+    .isLength({ min: 5, max: 200 })
+    .trim()
+]
+
 module.exports = {
   signup,
-  login
+  login,
+  addProduct
 }
