@@ -1,6 +1,7 @@
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
+const { validationResult } = require('express-validator/check')
 
 const { sendWelcomeMail, sendUpdatePasswordEmail } = require('../emails/transporter')
 
@@ -21,10 +22,13 @@ exports.postSignup = async (req, res, next) => {
   const confirmPassword = req.body.confirmPassword
   const cart = { products: [] }
   try {
-    const user = await User.findOne({ email })
-    if (user) {
-      req.flash('error', 'email already occupied.');
-      return res.redirect('/signup')
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(422).render('auth/signup', {
+        path: '/signup',
+        pageTitle: 'Signup',
+        errorMessage: errors.array()[0].msg,
+      })
     }
     if (!password || password !== confirmPassword) {
       req.flash('error', 'password and confirm password shoould be same.');
@@ -60,20 +64,32 @@ exports.postLogin = async (req, res) => {
     req.flash('error', 'Invalid email/password.')
     return res.redirect('/login')
   }
-  const user = await User.findOne({ email })
-  if (user) {
-    const isMatch = await bcrypt.compare(password, user.password)
-    if (!isMatch) {
-      req.flash('error', 'Invalid email/password.')
-      return res.redirect('/login')
+  try {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(422).render('auth/login', {
+        path: '/login',
+        pageTitle: 'Login',
+        errorMessage: errors.array()[0].msg,
+      })
     }
-    req.session.user = user
-    req.session.isLoggedIn = true
-    await req.session.save()
-    res.redirect('/')
-  } else {
-    req.flash('error', 'Profile not found please signup first')
-    res.redirect('/login');
+    const user = await User.findOne({ email })
+    if (user) {
+      const isMatch = await bcrypt.compare(password, user.password)
+      if (!isMatch) {
+        req.flash('error', 'Invalid email/password.')
+        return res.redirect('/login')
+      }
+      req.session.user = user
+      req.session.isLoggedIn = true
+      await req.session.save()
+      res.redirect('/')
+    } else {
+      req.flash('error', 'Profile not found please signup first')
+      res.redirect('/login');
+    }
+  } catch (err) {
+    console.log(err)
   }
 }
 

@@ -1,16 +1,17 @@
 const express = require('express');
 
 const authController = require('../controllers/auth');
+const validatorMiddleware = require('../middlewares/validator')
 
 const router = express.Router();
 
 router.get('/signup', authController.getSignup);
 
-router.post('/signup', authController.postSignup);
+router.post('/signup', validatorMiddleware.signup, authController.postSignup);
 
-router.get('/login', authController.getLogin);
+router.get('/login',  authController.getLogin);
 
-router.post('/login', authController.postLogin);
+router.post('/login', validatorMiddleware.login, authController.postLogin);
 
 router.post('/logout', authController.postLogout);
 
