@@ -13,13 +13,13 @@ router.get('/products', authMiddleware, adminControllers.getProducts)
 router.get('/add-product', authMiddleware, adminControllers.getAddProduct)
 
 // /admin/add-product => POST
-router.post('/add-product', authMiddleware, validatorMiddleware.addProduct, adminControllers.postAddProduct)
+router.post('/add-product', authMiddleware, validatorMiddleware.product, adminControllers.postAddProduct)
 
 // /admin/edit-product => GET
 router.get('/edit-product/:id', authMiddleware, adminControllers.getEditProduct)
 
 // /admin/edit-product => POST
-router.post('/edit-product', authMiddleware, validatorMiddleware.addProduct, adminControllers.postEditProduct)
+router.post('/edit-product', authMiddleware, validatorMiddleware.product, adminControllers.postEditProduct)
 
 // /admin/delete-product => POST
 router.post('/delete-product', authMiddleware, adminControllers.postDeleteProduct)

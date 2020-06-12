@@ -53,5 +53,5 @@ const addProduct = [
 module.exports = {
   signup,
   login,
-  addProduct
+  product
 }
